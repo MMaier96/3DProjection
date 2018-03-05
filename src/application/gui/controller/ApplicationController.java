@@ -6,24 +6,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 
 import application.parser.WaveFrontParser;
-import application.wavefront.Face;
-import application.wavefront.Object3D;
-import application.wavefront.Vector;
+import application.wavefront.Group3D;
+import application.wavefront.convert.WaveFrontToMeshViewConverter;
+import application.wavefront.convert.WaveFrontToStringBuilderConverter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Point3D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.shape.CullFace;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.stage.DirectoryChooser;
@@ -33,7 +30,7 @@ import javafx.stage.Stage;
 public class ApplicationController {
 
 	@FXML
-	HBox root;
+	VBox root;
 
 	@FXML
 	CheckBox xyProj;
@@ -45,6 +42,15 @@ public class ApplicationController {
 	@FXML
 	TextField input;
 
+	@FXML
+	MeshView meshViewX;
+	
+	@FXML
+	MeshView meshViewY;
+	
+	@FXML
+	MeshView meshViewZ;
+	
 	@FXML
 	Button createProjectionsButton;
 
@@ -106,62 +112,18 @@ public class ApplicationController {
 		}
 
 		WaveFrontParser parser = new WaveFrontParser(opened3DFile);
+		Group3D parse;
+		WaveFrontToMeshViewConverter meshConverter;
+		WaveFrontToStringBuilderConverter stringConverter;
+		
 
 		if (xyProj.isSelected()) {
-			Object3D object3D = parser.parse().projectXY();
+			parse = parser.parse();
+			parse.projectionZ();
 			
-			ArrayList<Float> pointsList = new ArrayList<>();
-			ArrayList<Integer> facesList = new ArrayList<>();
-			
-			TriangleMesh triangleMesh = new TriangleMesh();
-			
-			for (Vector vector: object3D.getVectors()) {
-				pointsList.add((float) vector.getX());
-				pointsList.add((float) vector.getY());
-				pointsList.add((float) vector.getZ());
-			}
-			int maxId = 0;
-			for (Face _face: object3D.getFaces()) {
-				if (_face.getIndex1() > maxId) {
-					maxId = _face.getIndex1();
-				}
-				if (_face.getIndex2() > maxId) {
-					maxId = _face.getIndex2();
-				}
-				if (_face.getIndex3() > maxId) {
-					maxId = _face.getIndex3();
-				}
-				
-				facesList.add(_face.getIndex1());
-				facesList.add(0);
-				facesList.add(_face.getIndex2());
-				facesList.add(0);
-				facesList.add(_face.getIndex3());
-				facesList.add(0);
-			}
-			float[] pointsArray = new float[pointsList.size()];
-			for (int i = 0; i < pointsArray.length; i++) {
-				pointsArray[i] = pointsList.get(i);
-			}
-			
-			int[] facesArray = new int[facesList.size()];
-			for (int i = 0; i < facesArray.length; i++) {
-				facesArray[i] = facesList.get(i);
-			}
-			System.out.println("max: " + maxId);
-			System.out.println("lengt: " + pointsArray.length);
-			
-			triangleMesh.getPoints().addAll(pointsArray);
-			triangleMesh.getTexCoords().addAll(0f,0f);
-			triangleMesh.getFaces().addAll(facesArray);
-			
-			MeshView meshView = new MeshView(triangleMesh);
-			meshView.setCullFace(CullFace.FRONT);
-			meshView.setScaleX(4);
-		    meshView.setScaleY(4);
-		    meshView.setScaleZ(4);
-			root.getChildren().add(meshView);
-			root.getChildren().add(new Button("tttt"));
+			stringConverter = new WaveFrontToStringBuilderConverter(parse);
+			stringConverter.convert();
+		    StringBuilder result = stringConverter.getResult();
 			
 			//export
 			PrintWriter writer = null;
@@ -170,32 +132,56 @@ public class ApplicationController {
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			writer.println(object3D.toString());
+			writer.println(result.toString());
 			writer.close();
+
+			meshConverter = new WaveFrontToMeshViewConverter(parse);
+			meshConverter.convert();
+			meshViewZ.setMesh(meshConverter.getResult());
 		}
 
 		if (xzProj.isSelected()) {
-			Object3D object = parser.parse().projectXZ();
+			parse = parser.parse();
+			parse.projectionY();
+			
+			stringConverter = new WaveFrontToStringBuilderConverter(parse);
+			stringConverter.convert();
+		    StringBuilder result = stringConverter.getResult();
+			
 			PrintWriter writer = null;
 			try {
 				writer = new PrintWriter(projections.getPath() + "/XZ_Projection.obj", "UTF-8");
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			writer.println(object.toString());
+			writer.println(result.toString());
 			writer.close();
+			
+			meshConverter = new WaveFrontToMeshViewConverter(parse);
+			meshConverter.convert();
+//			meshViewY.setMesh(meshConverter.getResult());
 		}
 
 		if (yzProj.isSelected()) {
-			Object3D object = parser.parse().projectYZ();
+			parse = parser.parse();
+			parse.projectionX();
+			
+			stringConverter = new WaveFrontToStringBuilderConverter(parse);
+			stringConverter.convert();
+		    StringBuilder result = stringConverter.getResult();
+			
 			PrintWriter writer = null;
 			try {
 				writer = new PrintWriter(projections.getPath() + "/YZ_Projection.obj", "UTF-8");
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			writer.println(object.toString());
+			writer.println(result.toString());
 			writer.close();
+			
+			meshConverter = new WaveFrontToMeshViewConverter(parse);
+			meshConverter.convert();
+//			meshViewX.setMesh(meshConverter.getResult());
 		}
 		
 		Alert alert = new Alert(AlertType.INFORMATION, "The projections were saved!");
@@ -207,6 +193,5 @@ public class ApplicationController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }

@@ -3,7 +3,7 @@ package application.gui;
 import application.config.AppConfig;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application{
@@ -12,7 +12,7 @@ public class Application extends javafx.application.Application{
 	private String[] arguments;
 	private Stage primaryStage;
 	private AppConfig config;
-	private HBox root; 
+	private VBox root; 
 	
 	
 	@Override
