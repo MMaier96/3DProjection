@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+import application.Main;
 import application.parser.WaveFrontParser;
 import application.wavefront.Object3D;
 import javafx.beans.value.ChangeListener;
@@ -63,6 +64,8 @@ public class ApplicationController {
 	@FXML
 	public void openFileChooser() {
 		FileChooser chooser = new FileChooser();
+		chooser.setInitialDirectory(new File("."));
+
 		chooser.setTitle("Load a 3D object...");
 		chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("WaveFront", "*.obj"));
 		opened3DFile = chooser.showOpenDialog(new Stage());
