@@ -6,20 +6,28 @@ public class Object3D {
 
 	private String name;
 	private ArrayList<Vector> vectors;
-	private ArrayList<Field> fields;
+	private ArrayList<Face> faces;
 
 	public Object3D(String name) {
 		this.name = name;
 		vectors = new ArrayList<>();
-		fields = new ArrayList<>();
+		faces = new ArrayList<>();
 	}
 
 	public void addVector(Vector vector) {
 		vectors.add(vector);
 	}
 
-	public void addField(Field field) {
-		fields.add(field);
+	public void addFace(Face face) {
+		faces.add(face);
+	}
+
+	public ArrayList<Vector> getVectors() {
+		return vectors;
+	}
+
+	public ArrayList<Face> getFaces() {
+		return faces;
 	}
 
 	public Object3D projectXY() {
@@ -52,8 +60,8 @@ public class Object3D {
 		}
 
 		builder.append("\n\n");
-		for (Field field : fields) {
-			builder.append(field.toString() + "\n");
+		for (Face face : faces) {
+			builder.append(face.toString() + "\n");
 		}
 		return builder.toString();
 	}

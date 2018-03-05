@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import application.wavefront.Field;
+import application.wavefront.Face;
 import application.wavefront.Object3D;
 import application.wavefront.Vector;
 import javafx.scene.control.Alert;
@@ -70,25 +70,25 @@ public class WaveFrontParser {
 				object.addVector(new Vector(x, y, z));
 			} else if (lines.get(i).charAt(0) == 'f') {
 				if (object == null) {
-					new Alert(AlertType.ERROR, "no group defined before the field!").showAndWait();
+					new Alert(AlertType.ERROR, "no group defined before the face!").showAndWait();
 					return null;
 				}
-				String[] field = lines.get(i).split(" ");
-				if (field.length < 4 || field.length > 5) {
-					new Alert(AlertType.ERROR, "wrong field format!").showAndWait();
+				String[] face = lines.get(i).split(" ");
+				if (face.length < 4 || face.length > 5) {
+					new Alert(AlertType.ERROR, "wrong face format!").showAndWait();
 					return null;
 				}
-				if (field.length == 4) {
-					int index1 = Integer.parseInt(field[1]);
-					int index2 = Integer.parseInt(field[2]);
-					int index3 = Integer.parseInt(field[3]);
-					object.addField(new Field(index1, index2, index3));
-				} else if (field.length == 5) {
-					int index1 = Integer.parseInt(field[1]);
-					int index2 = Integer.parseInt(field[2]);
-					int index3 = Integer.parseInt(field[3]);
-					int index4 = Integer.parseInt(field[3]);
-					object.addField(new Field(index1, index2, index3, index4));
+				if (face.length == 4) {
+					int index1 = Integer.parseInt(face[1]);
+					int index2 = Integer.parseInt(face[2]);
+					int index3 = Integer.parseInt(face[3]);
+					object.addFace(new Face(index1, index2, index3));
+				} else if (face.length == 5) {
+					int index1 = Integer.parseInt(face[1]);
+					int index2 = Integer.parseInt(face[2]);
+					int index3 = Integer.parseInt(face[3]);
+					int index4 = Integer.parseInt(face[3]);
+					object.addFace(new Face(index1, index2, index3, index4));
 				}
 
 			}

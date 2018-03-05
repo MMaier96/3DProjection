@@ -6,10 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import application.Main;
+
 import application.parser.WaveFrontParser;
+import application.wavefront.Face;
 import application.wavefront.Object3D;
+import application.wavefront.Vector;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -19,6 +23,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.MeshView;
+import javafx.scene.shape.TriangleMesh;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -59,6 +66,7 @@ public class ApplicationController {
 		xyProj.selectedProperty().addListener(checkBoxChangeListener);
 		xzProj.selectedProperty().addListener(checkBoxChangeListener);
 		yzProj.selectedProperty().addListener(checkBoxChangeListener);
+		
 	}
 
 	@FXML
@@ -100,14 +108,69 @@ public class ApplicationController {
 		WaveFrontParser parser = new WaveFrontParser(opened3DFile);
 
 		if (xyProj.isSelected()) {
-			Object3D object = parser.parse().projectXY();
+			Object3D object3D = parser.parse().projectXY();
+			
+			ArrayList<Float> pointsList = new ArrayList<>();
+			ArrayList<Integer> facesList = new ArrayList<>();
+			
+			TriangleMesh triangleMesh = new TriangleMesh();
+			
+			for (Vector vector: object3D.getVectors()) {
+				pointsList.add((float) vector.getX());
+				pointsList.add((float) vector.getY());
+				pointsList.add((float) vector.getZ());
+			}
+			int maxId = 0;
+			for (Face _face: object3D.getFaces()) {
+				if (_face.getIndex1() > maxId) {
+					maxId = _face.getIndex1();
+				}
+				if (_face.getIndex2() > maxId) {
+					maxId = _face.getIndex2();
+				}
+				if (_face.getIndex3() > maxId) {
+					maxId = _face.getIndex3();
+				}
+				
+				facesList.add(_face.getIndex1());
+				facesList.add(0);
+				facesList.add(_face.getIndex2());
+				facesList.add(0);
+				facesList.add(_face.getIndex3());
+				facesList.add(0);
+			}
+			float[] pointsArray = new float[pointsList.size()];
+			for (int i = 0; i < pointsArray.length; i++) {
+				pointsArray[i] = pointsList.get(i);
+			}
+			
+			int[] facesArray = new int[facesList.size()];
+			for (int i = 0; i < facesArray.length; i++) {
+				facesArray[i] = facesList.get(i);
+			}
+			System.out.println("max: " + maxId);
+			System.out.println("lengt: " + pointsArray.length);
+			
+			triangleMesh.getPoints().addAll(pointsArray);
+			triangleMesh.getTexCoords().addAll(0f,0f);
+			triangleMesh.getFaces().addAll(facesArray);
+			
+			MeshView meshView = new MeshView(triangleMesh);
+			meshView.setCullFace(CullFace.FRONT);
+			meshView.setScaleX(4);
+		    meshView.setScaleY(4);
+		    meshView.setScaleZ(4);
+			root.getChildren().add(meshView);
+			root.getChildren().add(new Button("tttt"));
+			
+			//export
 			PrintWriter writer = null;
 			try {
 				writer = new PrintWriter(projections.getPath() + "/XY_Projection.obj", "UTF-8");
 			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			writer.println(object.toString());
+			writer.println(object3D.toString());
 			writer.close();
 		}
 

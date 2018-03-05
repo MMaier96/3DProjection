@@ -23,6 +23,19 @@ public class Vector {
 	public void setZ(double z) {
 		this.z = z;
 	}
+	
+
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public double getZ() {
+		return z;
+	}
 
 	@Override
 	public String toString() {
