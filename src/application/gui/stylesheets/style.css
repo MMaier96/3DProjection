@@ -1,0 +1,7 @@
+.chart-series-line {
+    -fx-stroke-width: 1px;
+}
+.axis-minor-tick-mark {
+    -fx-fill: null;
+    -fx-stroke: transparent;
+}
