@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.stage.DirectoryChooser;
@@ -135,9 +136,11 @@ public class ApplicationController {
 			writer.println(result.toString());
 			writer.close();
 
+			parse = parser.parse();
 			meshConverter = new WaveFrontToMeshViewConverter(parse);
 			meshConverter.convert();
 			meshViewZ.setMesh(meshConverter.getResult());
+			meshViewZ.setDrawMode(DrawMode.FILL);
 		}
 
 		if (xzProj.isSelected()) {

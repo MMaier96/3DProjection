@@ -72,7 +72,7 @@
          </rotationAxis>
       </MeshView>
       <MeshView fx:id="meshViewY" cullFace="NONE" drawMode="LINE" />
-      <MeshView fx:id="meshViewZ" cullFace="NONE" drawMode="LINE">
+      <MeshView fx:id="meshViewZ" cullFace="NONE">
          <rotationAxis>
             <Point3D x="100.0" y="200.0" z="300.0" />
          </rotationAxis>

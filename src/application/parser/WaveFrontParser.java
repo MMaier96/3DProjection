@@ -129,7 +129,7 @@ public class WaveFrontParser {
 		String[] arguments = currentLine.split(" ");
 		ArrayList<Integer> vertexIndices = new ArrayList<>();
 		ArrayList<Integer> textureIndices = new ArrayList<>();
-
+		// TODO: implement polygon to triangles
 		for (String _argument : arguments) {
 			if (_argument.equals("f")) {
 				continue;
@@ -154,6 +154,7 @@ public class WaveFrontParser {
 		
 		
 		latestObject().addPolygon(new Polygon(vertexIndicesArray, textureIndicesArray));
+		// TODO: end implement polygon to triangles
 	}
 	
 	private Object3D latestObject() {
