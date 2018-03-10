@@ -9,21 +9,16 @@ import java.io.UnsupportedEncodingException;
 
 import application.parser.WaveFrontParser;
 import application.wavefront.Group3D;
-import application.wavefront.convert.WaveFrontToMeshViewConverter;
 import application.wavefront.convert.WaveFrontToStringBuilderConverter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.geometry.Point3D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.TriangleMesh;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -44,16 +39,11 @@ public class ApplicationController {
 	TextField input;
 
 	@FXML
-	MeshView meshViewX;
-	
-	@FXML
-	MeshView meshViewY;
-	
-	@FXML
-	MeshView meshViewZ;
-	
-	@FXML
 	Button createProjectionsButton;
+
+	@FXML
+	Button selectAllButton;
+	
 
 	private File opened3DFile;
 	private File projections;
@@ -76,6 +66,14 @@ public class ApplicationController {
 		
 	}
 
+	
+	@FXML 
+	public void selectAllButtonClick() {
+		xyProj.setSelected(true);
+		xzProj.setSelected(true);
+		yzProj.setSelected(true);
+	}
+	
 	@FXML
 	public void openFileChooser() {
 		FileChooser chooser = new FileChooser();
@@ -93,6 +91,7 @@ public class ApplicationController {
 		xyProj.setDisable(false);
 		xzProj.setDisable(false);
 		yzProj.setDisable(false);
+		selectAllButton.setDisable(false);
 	}
 
 	@FXML
@@ -114,7 +113,6 @@ public class ApplicationController {
 
 		WaveFrontParser parser = new WaveFrontParser(opened3DFile);
 		Group3D parse;
-		WaveFrontToMeshViewConverter meshConverter;
 		WaveFrontToStringBuilderConverter stringConverter;
 		
 
@@ -135,12 +133,6 @@ public class ApplicationController {
 			}
 			writer.println(result.toString());
 			writer.close();
-
-			parse = parser.parse();
-			meshConverter = new WaveFrontToMeshViewConverter(parse);
-			meshConverter.convert();
-			meshViewZ.setMesh(meshConverter.getResult());
-			meshViewZ.setDrawMode(DrawMode.FILL);
 		}
 
 		if (xzProj.isSelected()) {
@@ -159,10 +151,6 @@ public class ApplicationController {
 			}
 			writer.println(result.toString());
 			writer.close();
-			
-			meshConverter = new WaveFrontToMeshViewConverter(parse);
-			meshConverter.convert();
-//			meshViewY.setMesh(meshConverter.getResult());
 		}
 
 		if (yzProj.isSelected()) {
@@ -181,10 +169,6 @@ public class ApplicationController {
 			}
 			writer.println(result.toString());
 			writer.close();
-			
-			meshConverter = new WaveFrontToMeshViewConverter(parse);
-			meshConverter.convert();
-//			meshViewX.setMesh(meshConverter.getResult());
 		}
 		
 		Alert alert = new Alert(AlertType.INFORMATION, "The projections were saved!");

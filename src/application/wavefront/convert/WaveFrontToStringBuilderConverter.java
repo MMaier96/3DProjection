@@ -20,37 +20,18 @@ public class WaveFrontToStringBuilderConverter extends WaveFrontConverter {
 		for (Object3D _object : group.getObjects()) {
 			result.append("g ").append(_object.getName()).append("\n");
 			for (Vertex _vertex : _object.getVertices()) {
-				result.append("v ")
-				.append(_vertex.getX() + " ")
-				.append(_vertex.getY() + " ")
-				.append(_vertex.getZ() + " ")
-				.append("\n");
+				result.append(_vertex.toString());
 			}
 
 			result.append("\n");
 			for (VertexTexture _vertexTexture : _object.getVerticesTextures()) {
-				result.append("vt ")
-				.append(_vertexTexture.getU() + " ")
-				.append(_vertexTexture.getV() + " ")
-				.append("\n");
+				result.append(_vertexTexture.toString());
 			}
 			result.append("\n");
 			for (Polygon _polygon : _object.getPolygons()) {
-				if (_polygon.getTextureIndices().size() > 0) {
-					result.append("f ");
-					for (int i = 0; i < _polygon.getVertexIndices().size(); i++) {
-						result.append(_polygon.getVertexIndices().get(i) + "/")
-						.append(_polygon.getTextureIndices().get(i) + " ");
-					}
-					result.append("\n");
-				} else {
-					result.append("f ");
-					for (int i = 0; i < _polygon.getVertexIndices().size(); i++) {
-						result.append(_polygon.getVertexIndices().get(i) + " ");
-					}
-					result.append("\n");
-				}
+				result.append(_polygon.toString());
 			}
+			result.append("\n");
 		}
 	}
 
