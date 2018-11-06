@@ -3,6 +3,9 @@
  
  # WaveFront 3D Projection
 
+ ## Screenshot
+ ![Screenshot](https://i.imgur.com/yFPMgmH.png)
+ 
  ## File Structure
  The project is in early development phase, in order to run it properly you need to export an .obj file from Cinema4D.<br><br>
  The Program will check whether the first line of the .obj contains the following string:
